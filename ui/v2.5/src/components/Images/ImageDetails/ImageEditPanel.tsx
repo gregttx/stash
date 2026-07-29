@@ -34,6 +34,7 @@ import {
   excludeFileBasedGalleries,
 } from "src/components/Galleries/GallerySelect";
 import { useTagsEdit } from "src/hooks/tagsEdit";
+import { useStableValue } from "src/hooks/state";
 import { ScraperMenu } from "src/components/Shared/ScraperMenu";
 import {
   CustomFieldsInput,
@@ -66,16 +67,18 @@ export const ImageEditPanel: React.FC<IProps> = ({
 
   const isNew = image.id === undefined;
 
+  const imageGalleries = useStableValue(image.galleries);
+
   useEffect(() => {
     setGalleries(
-      image.galleries?.map((g) => ({
+      imageGalleries?.map((g) => ({
         id: g.id,
         title: galleryTitle(g),
         files: g.files,
         folder: g.folder,
       })) ?? []
     );
-  }, [image.galleries]);
+  }, [imageGalleries]);
 
   const scrapers = useListImageScrapers();
   const [scrapedImage, setScrapedImage] = useState<GQL.ScrapedImage | null>();
@@ -153,13 +156,16 @@ export const ImageEditPanel: React.FC<IProps> = ({
     formik.setFieldValue("studio_id", item ? item.id : null);
   }
 
-  useEffect(() => {
-    setPerformers(image.performers ?? []);
-  }, [image.performers]);
+  const imagePerformers = useStableValue(image.performers);
+  const imageStudio = useStableValue(image.studio);
 
   useEffect(() => {
-    setStudio(image.studio ?? null);
-  }, [image.studio]);
+    setPerformers(imagePerformers ?? []);
+  }, [imagePerformers]);
+
+  useEffect(() => {
+    setStudio(imageStudio ?? null);
+  }, [imageStudio]);
 
   useEffect(() => {
     if (isVisible) {

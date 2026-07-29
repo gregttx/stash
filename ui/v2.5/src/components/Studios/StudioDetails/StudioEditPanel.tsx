@@ -19,6 +19,7 @@ import { formikUtils } from "src/utils/form";
 import { yupFormikValidate, yupRequiredStringArray } from "src/utils/yup";
 import { Studio, StudioSelect } from "../StudioSelect";
 import { useTagsEdit } from "src/hooks/tagsEdit";
+import { useStableValue } from "src/hooks/state";
 import { Icon } from "src/components/Shared/Icon";
 import StashBoxIDSearchModal from "src/components/Shared/StashBoxIDSearchModal";
 import {
@@ -127,28 +128,31 @@ export const StudioEditPanel: React.FC<IStudioEditPanel> = ({
     formik.setFieldValue("image", imageData)
   );
 
+  const parentStudioValue = useStableValue(studio.parent_studio);
+  const childStudiosValue = useStableValue(studio.child_studios);
+
   useEffect(() => {
     setParentStudio(
-      studio.parent_studio
+      parentStudioValue
         ? {
-            id: studio.parent_studio.id,
-            name: studio.parent_studio.name,
+            id: parentStudioValue.id,
+            name: parentStudioValue.name,
             aliases: [],
           }
         : null
     );
-  }, [studio.parent_studio]);
+  }, [parentStudioValue]);
 
   useEffect(() => {
     setChildStudios(
-      (studio.child_studios ?? []).map((childStudio) => ({
+      (childStudiosValue ?? []).map((childStudio) => ({
         id: childStudio.id,
         name: childStudio.name,
         aliases: [],
         image_path: childStudio.image_path,
       }))
     );
-  }, [studio.child_studios]);
+  }, [childStudiosValue]);
 
   useEffect(() => {
     setImage(formik.values.image);

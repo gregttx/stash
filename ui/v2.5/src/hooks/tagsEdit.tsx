@@ -8,6 +8,7 @@ import { Badge, Button } from "react-bootstrap";
 import { Icon } from "src/components/Shared/Icon";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { CollapseButton } from "src/components/Shared/CollapseButton";
+import { useStableValue } from "src/hooks/state";
 
 export function useTagsEdit(
   srcTags: Tag[] | undefined,
@@ -30,9 +31,11 @@ export function useTagsEdit(
     setNewTags(undefined);
   }
 
+  const stableSrcTags = useStableValue(srcTags);
+
   useEffect(() => {
-    setTags(srcTags ?? []);
-  }, [srcTags]);
+    setTags(stableSrcTags ?? []);
+  }, [stableSrcTags]);
 
   async function createNewTag(toCreate: GQL.ScrapedTag) {
     const tagInput: GQL.TagCreateInput = { name: toCreate.name ?? "" };
