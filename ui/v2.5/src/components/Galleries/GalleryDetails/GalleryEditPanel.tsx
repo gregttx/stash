@@ -30,6 +30,7 @@ import { formikUtils } from "src/utils/form";
 import { Studio, StudioSelect } from "src/components/Studios/StudioSelect";
 import { Scene, SceneSelect } from "src/components/Scenes/SceneSelect";
 import { useTagsEdit } from "src/hooks/tagsEdit";
+import { useStableValue } from "src/hooks/state";
 import { ScraperMenu } from "src/components/Shared/ScraperMenu";
 import {
   CustomFieldsInput,
@@ -141,17 +142,21 @@ export const GalleryEditPanel: React.FC<IProps> = ({
     formik.setFieldValue("studio_id", item ? item.id : null);
   }
 
-  useEffect(() => {
-    setPerformers(gallery.performers ?? []);
-  }, [gallery.performers]);
+  const galleryPerformers = useStableValue(gallery.performers);
+  const galleryStudio = useStableValue(gallery.studio);
+  const galleryScenes = useStableValue(gallery.scenes);
 
   useEffect(() => {
-    setStudio(gallery.studio ?? null);
-  }, [gallery.studio]);
+    setPerformers(galleryPerformers ?? []);
+  }, [galleryPerformers]);
 
   useEffect(() => {
-    setScenes(gallery.scenes ?? []);
-  }, [gallery.scenes]);
+    setStudio(galleryStudio ?? null);
+  }, [galleryStudio]);
+
+  useEffect(() => {
+    setScenes(galleryScenes ?? []);
+  }, [galleryScenes]);
 
   useEffect(() => {
     if (isVisible) {

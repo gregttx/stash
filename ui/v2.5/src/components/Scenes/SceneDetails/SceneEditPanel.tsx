@@ -53,6 +53,7 @@ import { Studio, StudioSelect } from "src/components/Studios/StudioSelect";
 import { Gallery, GallerySelect } from "src/components/Galleries/GallerySelect";
 import { Group } from "src/components/Groups/GroupSelect";
 import { useTagsEdit } from "src/hooks/tagsEdit";
+import { useStableValue } from "src/hooks/state";
 import { ScraperMenu } from "src/components/Shared/ScraperMenu";
 import StashBoxIDSearchModal from "src/components/Shared/StashBoxIDSearchModal";
 import {
@@ -119,28 +120,33 @@ export const SceneEditPanel: React.FC<IProps> = ({
   const [scrapedScene, setScrapedScene] = useState<GQL.ScrapedScene | null>();
   const [endpoint, setEndpoint] = useState<string>();
 
+  const sceneGalleries = useStableValue(scene.galleries);
+  const scenePerformers = useStableValue(scene.performers);
+  const sceneGroups = useStableValue(scene.groups);
+  const sceneStudio = useStableValue(scene.studio);
+
   useEffect(() => {
     setGalleries(
-      scene.galleries?.map((g) => ({
+      sceneGalleries?.map((g) => ({
         id: g.id,
         title: galleryTitle(g),
         files: g.files,
         folder: g.folder,
       })) ?? []
     );
-  }, [scene.galleries]);
+  }, [sceneGalleries]);
 
   useEffect(() => {
-    setPerformers(scene.performers ?? []);
-  }, [scene.performers]);
+    setPerformers(scenePerformers ?? []);
+  }, [scenePerformers]);
 
   useEffect(() => {
-    setGroups(scene.groups?.map((m) => m.group) ?? []);
-  }, [scene.groups]);
+    setGroups(sceneGroups?.map((m) => m.group) ?? []);
+  }, [sceneGroups]);
 
   useEffect(() => {
-    setStudio(scene.studio ?? null);
-  }, [scene.studio]);
+    setStudio(sceneStudio ?? null);
+  }, [sceneStudio]);
 
   const { configuration: stashConfig } = useConfigurationContext();
 

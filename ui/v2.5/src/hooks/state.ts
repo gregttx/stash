@@ -1,4 +1,21 @@
 import React, { useCallback, Dispatch, SetStateAction } from "react";
+import isEqual from "lodash-es/isEqual";
+
+// useStableValue returns the given value, only changing the returned identity when
+// the contents of the value change.
+// Objects and arrays within graphql query results are not guaranteed to keep their
+// identity when a query is re-read from the apollo cache: the cache reuses the
+// previously built result objects, but those are memoised in a bounded cache, so a
+// re-read can rebuild an identical value as a new object. Use this hook when such a
+// value is used as an effect dependency, so that the effect only runs when the value
+// has actually changed.
+export function useStableValue<T>(value: T): T {
+  const ref = React.useRef<T>(value);
+  if (!isEqual(ref.current, value)) {
+    ref.current = value;
+  }
+  return ref.current;
+}
 
 // useInitialState is an extension of the useState hook.
 // It maintains a state, but additionally exposes a setInitialState function.

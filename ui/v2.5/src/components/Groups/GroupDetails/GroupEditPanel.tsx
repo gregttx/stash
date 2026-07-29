@@ -26,6 +26,7 @@ import {
 } from "src/utils/yup";
 import { Studio, StudioSelect } from "src/components/Studios/StudioSelect";
 import { useTagsEdit } from "src/hooks/tagsEdit";
+import { useStableValue } from "src/hooks/state";
 import { Group } from "src/components/Groups/GroupSelect";
 import { RelatedGroupTable, IRelatedGroupEntry } from "./RelatedGroupTable";
 import {
@@ -146,13 +147,16 @@ export const GroupEditPanel: React.FC<IGroupEditPanel> = ({
     formik.setFieldValue("studio_id", item ? item.id : null);
   }
 
-  useEffect(() => {
-    setStudio(group.studio ?? null);
-  }, [group.studio]);
+  const groupStudio = useStableValue(group.studio);
+  const groupContainingGroups = useStableValue(group.containing_groups);
 
   useEffect(() => {
-    setContainingGroups(group.containing_groups?.map((m) => m.group) ?? []);
-  }, [group.containing_groups]);
+    setStudio(groupStudio ?? null);
+  }, [groupStudio]);
+
+  useEffect(() => {
+    setContainingGroups(groupContainingGroups?.map((m) => m.group) ?? []);
+  }, [groupContainingGroups]);
 
   // set up hotkeys
   useEffect(() => {
