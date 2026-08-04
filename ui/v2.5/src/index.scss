@@ -627,6 +627,20 @@ div.react-select__control {
     color: $text-color;
   }
 
+  /* react-select sizes the grid column holding the real <input> to the text
+     typed so far, so the input collapses to ~2px wide whenever the box is
+     empty; the rest of the box is plain divs. Browsers decide whether to put
+     "Paste" in the context menu based on the element under the cursor rather
+     than the focused element, so right-clicking the box offered no "Paste"
+     even though Ctrl+V worked (react-select's control focuses the input on
+     mousedown regardless of where it is clicked). Let the column fill the
+     space left over on its line so the input actually covers the empty area
+     it appears to occupy. The min-content floor keeps react-select's
+     grow-with-the-text behaviour intact. */
+  .react-select__input-container {
+    grid-template-columns: 0 minmax(min-content, 1fr);
+  }
+
   .react-select__multi-value {
     background-color: $muted-gray;
     color: $text-color;
